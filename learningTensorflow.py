@@ -1,0 +1,47 @@
+# -*- coding:utf-8 -*-
+
+import tensorflow as tf
+
+node1 = tf.constant(3.0, dtype=tf.float32)
+node2 = tf.constant(4.0)
+print(node1, node2)
+sess = tf.Session()
+print(sess.run([node1, node2]))
+print(sess.run(node2))
+node3 = tf.add(node1, node2)
+print("node3:", node3)
+print("sess.run(node3):", sess.run(node3))
+a = tf.placeholder(tf.float32)
+b = tf.placeholder(tf.float32)
+adder_node = tf.add(a, b)
+print(sess.run(adder_node, {a: 1.6, b: 2}))
+print(sess.run(adder_node, {a: [[1, 2], [3, 4]], b: [[5, 6], [7, 8]]}))
+c = tf.placeholder(tf.float32)
+add_and_triple = adder_node * c
+print(sess.run(add_and_triple, {a: 3, b: 4.5, c: 3}))
+W = tf.Variable([.3], dtype=tf.float32)
+b = tf.Variable([-.3], dtype=tf.float32)
+x = tf.placeholder(tf.float32)
+liner_model = W * x + b
+# print(liner_model)
+init = tf.global_variables_initializer()
+sess.run(init)
+print(sess.run(liner_model, {x: [1, 2, 3, 4]}))
+y = tf.placeholder(tf.float32)
+squarded_deltas = tf.square(liner_model - y)
+loss = tf.reduce_sum(squarded_deltas)
+print(sess.run(loss, {x: [1, 2, 3, 4], y: [0, -1, -2, -3]}))
+fixW = tf.assign(W, [-1.])
+fixb = tf.assign(b, [1.])
+sess.run([fixW, fixb])
+print(sess.run(loss, {x: [1, 2, 3, 4], y: [0, -1, -2, -3]}))
+optimizer = tf.train.GradientDescentOptimizer(0.01)
+train = optimizer.minimize(loss)
+sess.run(init)
+for i in range(1000):
+    sess.run(train, {x: [1, 2, 3, 4], y: [0, -1, -2, -3]})
+
+# curr_W, curr_b = sess.run([W, b])
+curr_W, curr_b, curr_loss = sess.run([W, b, loss], {x: [1, 2, 3, 4], y: [0, -1, -2, -3]})
+print("W: %s b: %s loss: %s" % (curr_W, curr_b, curr_loss))
+print(type(train))
