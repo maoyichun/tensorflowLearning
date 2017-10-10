@@ -20,21 +20,22 @@ y = tf.nn.softmax(tf.matmul(x, W) + b)
 y_ = tf.placeholder("float", [None, 10])
 
 # 计算交叉墒
-cross_entropy = -tf.reduce_sum(y_ * tf.log(y))
+# cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), 1))
+cross_entropy = tf.reduce_mean(
+      tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y))
 
-# 使用梯度下降算法以0.01的学习率最小化交叉墒
-train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
+# 使用梯度下降算法以0.5的学习率最小化交叉墒
+train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
+
+# 启动会话
+sess = tf.InteractiveSession()
 
 # 初始化之前创建的变量的操作
 # init = tf.initialize_all_variables()
-init = tf.global_variables_initializer()
-
-# 启动初始化
-sess = tf.Session()
-sess.run(init)
+tf.global_variables_initializer().run()
 
 # 开始训练模型，循环1000次，每次都会随机抓取训练数据中的100条数据，然后作为参数替换之前的占位符来运行train_step
-for i in range(1000):
+for _ in range(100000):
     batch_xs, batch_ys = mnist.train.next_batch(100)
     sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 
@@ -42,7 +43,9 @@ for i in range(1000):
 correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
 
 # 计算正确预测项的比例，因为tf.equal返回的是布尔值，使用tf.cast可以把布尔值转换成浮点数，tf.reduce_mean是求平均值
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 # 在session中启动accuracy，输入是MNIST中的测试集
 print(sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels}))
+batch_test_x, batch_test_y = mnist.train.next_batch(1000)
+print(sess.run(accuracy, feed_dict={x: batch_test_x, y_: batch_test_y}))
