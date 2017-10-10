@@ -35,7 +35,7 @@ sess = tf.InteractiveSession()
 tf.global_variables_initializer().run()
 
 # 开始训练模型，循环1000次，每次都会随机抓取训练数据中的100条数据，然后作为参数替换之前的占位符来运行train_step
-for _ in range(100000):
+for _ in range(1000):
     batch_xs, batch_ys = mnist.train.next_batch(100)
     sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 
