@@ -80,7 +80,8 @@ h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 # 第四层，输入1024维，输出10维，也就是具体的0~9分类
 W_fc2 = weight_variable([1024, 10])
 b_fc2 = bias_variable([10])
-y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)  # 使用softmax作为多分类激活函数
+# y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2   # softmax的计算并到softmax_cross_entropy_with_logits中了
 y_ = tf.placeholder(tf.float32, [None, 10])
 
 # cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))  # 损失函数，交叉熵

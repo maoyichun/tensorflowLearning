@@ -14,7 +14,8 @@ W = tf.Variable(tf.zeros([784, 10]))
 b = tf.Variable(tf.zeros([10]))
 
 # 使用Tensorflow提供的回归模型softmax，y代表输出
-y = tf.nn.softmax(tf.matmul(x, W) + b)
+# y = tf.nn.softmax(tf.matmul(x, W) + b)
+y = tf.matmul(x,W) + b
 
 # 为了进行训练，需要把正确值一并传入网络
 y_ = tf.placeholder("float", [None, 10])
@@ -46,5 +47,5 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 # 在session中启动accuracy，输入是MNIST中的测试集
 print(sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels}))
-batch_test_x, batch_test_y = mnist.train.next_batch(1000)
-print(sess.run(accuracy, feed_dict={x: batch_test_x, y_: batch_test_y}))
+# batch_test_x, batch_test_y = mnist.train.next_batch(1000)
+# print(sess.run(accuracy, feed_dict={x: batch_test_x, y_: batch_test_y}))
