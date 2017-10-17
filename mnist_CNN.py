@@ -1,37 +1,6 @@
-# -*- coding: utf-8 -*-
-# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
-"""A very simple MNIST classifier.
-See extensive documentation at
-http://tensorflow.org/tutorials/mnist/beginners/index.md
-"""
-# from __future__ import absolute_import
-# from __future__ import division
-# from __future__ import print_function
-
-# Import data
 from tensorflow.examples.tutorials.mnist import input_data
-
 import tensorflow as tf
 
-# flags = tf.app.flags
-# FLAGS = flags.FLAGS
-# flags.DEFINE_string('data_dir', '/tmp/data/', 'Directory for storing data')  # 第一次启动会下载文本资料，放在/tmp/data文件夹下
-#
-# print(FLAGS.data_dir)
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
 
@@ -72,7 +41,7 @@ def max_pool_2x2(x):
 
 
 sess = tf.InteractiveSession()
-
+# sess = tf.Session()
 x = tf.placeholder(tf.float32, [None, 784])
 x_image = tf.reshape(x, [-1, 28, 28, 1])  # 将输入按照 conv2d中input的格式来reshape，reshape
 
@@ -104,6 +73,7 @@ W_fc1 = weight_variable([7 * 7 * 64, 1024])
 b_fc1 = bias_variable([1024])
 h_pool2_flat = tf.reshape(h_pool2, [-1, 7 * 7 * 64])
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+
 keep_prob = tf.placeholder(tf.float32)  # 这里使用了drop out,即随机安排一些cell输出值为0，可以防止过拟合
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
@@ -113,7 +83,8 @@ b_fc2 = bias_variable([10])
 y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)  # 使用softmax作为多分类激活函数
 y_ = tf.placeholder(tf.float32, [None, 10])
 
-cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))  # 损失函数，交叉熵
+# cross_entropy = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y_conv), reduction_indices=[1]))  # 损失函数，交叉熵
+cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
 train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)  # 使用adam优化
 # train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)  # 使用adam优化
 correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))  # 计算准确度
