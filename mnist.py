@@ -44,3 +44,24 @@ def inference(images, hidden1_units, hidden2_units):
         logits = tf.matmul(hidden2, weights) + biases
 
     return logits
+
+
+def loss(logits, labels):
+    labels = tf.to_int64(labels)
+    cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(
+        labels=labels, logits=logits, name='xentropy'
+    )
+    return tf.reduce_mean(cross_entropy, name='xentropy_mean')
+
+
+def training(loss, learning_rate):
+    tf.summary.scalar('loss', loss)
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+    global_step = tf.Variable(0, name='global_step', trainable=False)
+    train_op = optimizer.minimize(loss, global_step=global_step)
+    return train_op
+
+
+def evaluation(logits, labels):
+    correct = tf.nn.in_top_k(logits, labels, 1)
+    return tf.reduce_sum(tf.cast(correct, tf.int32))
