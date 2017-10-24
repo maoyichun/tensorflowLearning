@@ -3,7 +3,8 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-from urllib import request
+# from urllib import request
+import urllib.request
 
 import numpy as np
 import tensorflow as tf
@@ -17,12 +18,12 @@ IRIS_TEST_URL = "http://download.tensorflow.org/data/iris_test.csv"
 
 def main():
     if not os.path.exists(IRIS_TRAINING):
-        raw = request.urlopen(IRIS_TRAINING_URL).read()
+        raw = urllib.request.urlopen(IRIS_TRAINING_URL).read()
         with open(IRIS_TRAINING, "wb") as f:
             f.write(raw)
 
     if not os.path.exists(IRIS_TEST):
-        raw = request.urlopen(IRIS_TEST_URL).read()
+        raw = urllib.request.urlopen(IRIS_TEST_URL).read()
         with open(IRIS_TEST, "wb") as f:
             f.write(raw)
 
