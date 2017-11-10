@@ -21,7 +21,7 @@ b = tf.Variable(0.0, name="bias")
 
 Y_predicted = X * X * w + X * u + b
 
-# 除以1e5防止loss过大溢出 输出nan
+# 除以1e3防止loss过大溢出 输出nan
 loss = tf.square(Y - Y_predicted, name="loss") / 1e3
 
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.0001).minimize(loss)
